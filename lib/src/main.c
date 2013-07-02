@@ -6,7 +6,7 @@
 int write_packed_png(char* src, char* dst) {
     memblk_t* png_header = memblk_x64_unpack("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAA==");
     memblk_t* png_footer = memblk_x64_unpack("AAAAAElFTkSuQmCC");
-    memblk_t* file_chunk = build_file_chunk(src);
+    memblk_t* file_chunk = pack_file(src);
 
     FILE* fp = fopen(dst, "w");
 

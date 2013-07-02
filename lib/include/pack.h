@@ -25,7 +25,7 @@ extern "C" {
 
 static inline byte* pack_uint32(byte* ptr, uint32_t ui32);
 
-memblk_t* build_file_chunk(char* filename);
+memblk_t* pack_file(char* filename);
 
 
 

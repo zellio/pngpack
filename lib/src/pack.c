@@ -12,7 +12,7 @@ static inline byte* pack_uint32(byte* ptr, uint32_t ui32) {
     return ptr;
 }
 
-memblk_t* build_file_chunk(char* filename) {
+memblk_t* pack_file(char* filename) {
     struct stat st;
     stat(filename, &st);
     size_t size = st.st_size;
