@@ -12,6 +12,7 @@ static inline byte* pack_uint32(byte* ptr, uint32_t ui32) {
     return ptr;
 }
 
+
 memblk_t* pack_file(char* filename) {
     struct stat st;
     stat(filename, &st);
@@ -50,6 +51,40 @@ memblk_t* pack_file(char* filename) {
     crc = crc32(crc, crc_start, f64_size + 4);
 
     pack_uint32(data, crc);
+
+    return container;
+}
+
+
+static inline uint32_t unpack_uint32(byte* ptr) {
+    uint32_t ui32 = 0;
+    ui32 += ((*ptr++) << 24);
+    ui32 += ((*ptr++) << 16);
+    ui32 += ((*ptr++) << 8);
+    ui32 += ((*ptr++) << 0);
+    return ui32;
+}
+
+
+
+memblk_t* unpack_file(char* filename) {
+    FILE* fp = fopen(filename, "rb");
+    fseek(fp, 55L, SEEK_SET);
+
+    byte* size_blob = calloc(4, sizeof(uint8_t));
+    fread(size_blob, sizeof(uint8_t), 4, fp);
+
+    size_t fd64_size = unpack_uint32(size_blob);
+    fseek(fp, 4L, SEEK_CUR);
+
+    char* fd64_data = calloc(fd64_size, sizeof(uint8_t));
+    fread(fd64_data, sizeof(uint8_t), fd64_size, fp);
+
+    memblk_t* container = memblk_x64_unpack(fd64_data);
+
+    free(size_blob);
+    free(fd64_data);
+    fclose(fp);
 
     return container;
 }

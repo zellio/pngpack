@@ -27,15 +27,28 @@ int write_packed_png(char* src, char* dst) {
     return 0;
 }
 
+
 int main(int argc, char** argv) {
-    if (argc != 3) {
-        fprintf(stderr, "usage: pngpack src dst\r\n");
+
+    char *src, *dst;
+
+    switch(argc) {
+    case 2://unpack
+        src = argv[1];
+        FILE* fp = fopen("pngpack.out", "w");
+        memblk_t* file = unpack_file(src);
+        memblk_write(file, fp);
+        fclose(fp);
+        break;
+    case 3: //pack
+        src = argv[1];
+        dst  = argv[2];
+        write_packed_png(src, dst);
+        break;
+    default:
+        fprintf(stderr, "usage: pngpack src [dst]\r\n");
         exit(1);
+        break;
     }
-
-    char* src = argv[1];
-    char* dst = argv[2];
-
-    write_packed_png(src, dst);
     return 0;
 }
