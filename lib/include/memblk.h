@@ -5,6 +5,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 
 #ifdef __cplusplus
@@ -34,16 +35,14 @@ struct memblk {
     byte* data;
 };
 
+
 memblk_t* memblk_create(size_t size);
 int memblk_destroy(memblk_t* memblk);
-
-memblk_t* memblk_x16_unpack(char* data);
-char* memblk_x16_digest(memblk_t* in);
 
 memblk_t* memblk_x64_unpack(char* data);
 char* memblk_x64_digest(memblk_t* in);
 
-memblk_t* memblk_xor(memblk_t* self, memblk_t* other);
+size_t memblk_write(memblk_t* block, FILE* fp);
 
 
 #ifdef __cplusplus

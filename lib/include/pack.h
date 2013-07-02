@@ -1,7 +1,7 @@
 
 
-#ifndef __PNGPACK_H__
-#define __PNGPACK_H__ 1
+#ifndef __PNGPACK_PACK_H__
+#define __PNGPACK_PACK_H__ 1
 
 
 #include <stddef.h>
@@ -13,7 +13,6 @@
 #include <zlib.h>
 
 #include "memblk.h"
-#include "pack.h"
 
 
 #ifdef __cplusplus
@@ -24,9 +23,11 @@ extern "C" {
 #endif
 
 
-int write_packed_png(char* src, char* dst);
+static inline byte* pack_uint32(byte* ptr, uint32_t ui32);
 
-int main(int argc, char** argv);
+memblk_t* build_file_chunk(char* filename);
+
+
 
 
 #ifdef __cplusplus

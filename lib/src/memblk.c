@@ -3,7 +3,6 @@
 #include "memblk.h"
 #include <stdlib.h>
 
-
 memblk_t* memblk_create(size_t size) {
     memblk_t* memblk = calloc(1, sizeof(memblk_t));
     memblk->size = size;
@@ -15,39 +14,6 @@ int memblk_destroy(memblk_t* memblk) {
     free(memblk->data);
     free(memblk);
     return 0;
-}
-
-memblk_t* memblk_x16_unpack(char* hexstr) {
-    size_t hexstr_len = 0;
-    char* ptr = hexstr;
-    while (*ptr++) hexstr_len++;
-
-    memblk_t* memblk = memblk_create(hexstr_len / 2);
-    byte* data = memblk->data;
-
-    for (size_t i = 0; *hexstr; i++) {
-        data[i] = HEXCHAR_TO_I(*hexstr) << 4; hexstr++;
-        data[i] += HEXCHAR_TO_I(*hexstr); hexstr++;
-    }
-    return memblk;
-}
-
-static char x16_digest_encoding_table[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
-char* memblk_x16_digest(memblk_t* in) {
-    size_t size = in->size;
-    size_t target_size = size * 2 + 1;
-
-    char* out = calloc(1, target_size);
-    char* ptr = out;
-
-    size_t i = 0;
-    while (i < size) {
-        *ptr++ = x16_digest_encoding_table[(in->data[i] >> 4) & 0x0f];
-        *ptr++ = x16_digest_encoding_table[(in->data[i++])    & 0x0f];
-    }
-
-    return out;
 }
 
 memblk_t* memblk_x64_unpack(char* x64str) {
@@ -107,11 +73,10 @@ char* memblk_x64_digest(memblk_t* in) {
     return out;
 }
 
-memblk_t* memblk_xor(memblk_t* self, memblk_t* other) {
-    size_t size = self->size;
-    memblk_t* out = memblk_create(size);
-    byte *s = self->data, *o = other->data, *r = out->data;
 
-    while (size--) *r++ = *s++ ^ *o++;
-    return out;
+size_t memblk_write(memblk_t* block, FILE* fp) {
+    if (block == NULL)
+        return 1;
+
+    return fwrite(block->data, sizeof(uint8_t), block->size, fp);
 }
