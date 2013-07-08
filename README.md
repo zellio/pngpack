@@ -1,11 +1,10 @@
 
 # pngpack
 
-Small C utility for packing files into the comment section of png files.
+Small utility for packing arbitrary files into PNG comment sections.
 
-Currently files are packed in base64 encoding because that was quick and easy.
-
-In the future they will be compressed and/or encrypted.
+Currently files are simply base64 encoded and packed into a generic PNG
+file. Future plans include compression and encryption.
 
 ## Copyright
 
