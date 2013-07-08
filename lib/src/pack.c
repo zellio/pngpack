@@ -2,6 +2,10 @@
 
 #include "pack.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <zlib.h>
 
 
 static inline byte* pack_uint32(byte* ptr, uint32_t ui32) {
@@ -12,45 +16,41 @@ static inline byte* pack_uint32(byte* ptr, uint32_t ui32) {
     return ptr;
 }
 
-
 memblk_t* pack_file(char* filename) {
     struct stat st;
     stat(filename, &st);
     size_t size = st.st_size;
-
     FILE* fp = fopen(filename, "rb");
-    byte* fdata = calloc(size, sizeof(uint8_t));
-    fflush(stdin);
-    fread(fdata, sizeof(uint8_t), size, fp);
-    fclose(fp);
 
-    memblk_t* container = memblk_create(0);
-    container->data = fdata;
-    container->size = size;
+    memblk_t* fdata = memblk_create(size);
+    memblk_fread(fdata, size, fp);
+    memblk_contents_x64_pack(fdata);
 
-    byte* f64_data = (byte*)memblk_x64_digest(container);
-    size_t f64_size = (size + 2) / 3 * 4;
+    size_t fdata_size = fdata->size;
+    size_t container_size = fdata_size + 20;
 
-    free(fdata);
+    memblk_t* container = memblk_create(container_size);
 
-    container->data = calloc(f64_size + 12, sizeof(byte));
-    container->size = f64_size + 12;
+    byte* fdata_data = fdata->data;
+    byte* container_data = container->data;
 
-    byte* data = container->data;
+    container_data = pack_uint32(container_data, fdata_size + 8);
+    byte* crc_start = container_data;
 
-    data = pack_uint32(data, f64_size);
+    container_data = pack_uint32(container_data, 0x69545874);
+    container_data = pack_uint32(container_data, 0x436f6d6d);
+    container_data = pack_uint32(container_data, 0x656e7400);
 
-    byte* crc_start = data;
-
-    data = pack_uint32(data, 0x69545874);
-
-    memcpy(data, f64_data, f64_size);
-    data += f64_size;
+    memcpy(container_data, fdata_data, fdata_size);
+    container_data += fdata_size;
 
     uint64_t crc = crc32(0L, Z_NULL, 0);
-    crc = crc32(crc, crc_start, f64_size + 4);
+    crc = crc32(crc, crc_start, fdata_size + 12);
 
-    pack_uint32(data, crc);
+    pack_uint32(container_data, crc);
+
+    memblk_destroy(fdata);
+    fclose(fp);
 
     return container;
 }
@@ -65,26 +65,20 @@ static inline uint32_t unpack_uint32(byte* ptr) {
     return ui32;
 }
 
-
-
 memblk_t* unpack_file(char* filename) {
     FILE* fp = fopen(filename, "rb");
     fseek(fp, 55L, SEEK_SET);
 
-    byte* size_blob = calloc(4, sizeof(uint8_t));
-    fread(size_blob, sizeof(uint8_t), 4, fp);
-
+    byte* size_blob = calloc(4, sizeof(byte));
+    fread(size_blob, sizeof(byte), 4, fp);
     size_t fd64_size = unpack_uint32(size_blob);
-    fseek(fp, 4L, SEEK_CUR);
-
-    char* fd64_data = calloc(fd64_size, sizeof(uint8_t));
-    fread(fd64_data, sizeof(uint8_t), fd64_size, fp);
-
-    memblk_t* container = memblk_x64_unpack(fd64_data);
-
     free(size_blob);
-    free(fd64_data);
-    fclose(fp);
 
-    return container;
+    memblk_t* block = memblk_create(fd64_size - 8);
+    fseek(fp, 12L, SEEK_CUR);
+    memblk_fread(block, fd64_size - 8, fp);
+
+    memblk_contents_x64_unpack(block);
+
+    return block;
 }

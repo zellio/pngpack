@@ -6,11 +6,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <zlib.h>
 
 #include "memblk.h"
 
@@ -27,8 +22,6 @@ static inline byte* pack_uint32(byte* ptr, uint32_t ui32);
 
 memblk_t* pack_file(char* filename);
 memblk_t* unpack_file(char* filename);
-
-
 
 
 #ifdef __cplusplus

@@ -1,7 +1,9 @@
 
 
 #include "memblk.h"
+
 #include <stdlib.h>
+
 
 memblk_t* memblk_create(size_t size) {
     memblk_t* memblk = calloc(1, sizeof(memblk_t));
@@ -66,17 +68,46 @@ char* memblk_x64_digest(memblk_t* in) {
     }
 
     switch (size % 3) {
-    case 1: *ptr-- = '=';
-    case 2: *ptr-- = '='; break;
+    case 1: *--ptr = '=';
+    case 2: *--ptr = '='; break;
     }
 
     return out;
 }
 
+size_t memblk_fread(memblk_t* block, size_t size, FILE* fp) {
+    if (block == NULL) return -1;
+    if (fp == NULL) return -2;
+    if (size > block->size) return -3;
 
-size_t memblk_write(memblk_t* block, FILE* fp) {
-    if (block == NULL)
-        return 1;
+    return fread(block->data, sizeof(byte), size, fp);
+}
 
-    return fwrite(block->data, sizeof(uint8_t), block->size, fp);
+size_t memblk_fwrite(memblk_t* block, size_t size, FILE* fp) {
+    if (block == NULL) return -1;
+    if (fp == NULL) return -2;
+    if (size > block->size) return -3;
+
+    return fwrite(block->data, sizeof(byte), size, fp);
+}
+
+size_t memblk_contents_x64_pack(memblk_t* block) {
+    size_t size = block->size;
+    size_t target_size = (size + 2) / 3 * 4;
+    char* target_data = memblk_x64_digest(block);
+    block->data = (byte*)target_data;
+    block->size = target_size;
+    return target_size;
+}
+
+size_t memblk_contents_x64_unpack(memblk_t* block) {
+    char* str = calloc(block->size + 1, sizeof(byte));
+    snprintf(str, block->size + 1, "%s", block->data);
+    memblk_t* new_block = memblk_x64_unpack(str);
+    free(str);
+    free(block->data);
+    block->size = new_block->size;
+    block->data = new_block->data;
+    free(new_block);
+    return block->size;
 }

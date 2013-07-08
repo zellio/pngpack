@@ -1,6 +1,7 @@
 
-#ifndef __ZHE_MATASANO_TYPE_MEMBLK_H__
-#define __ZHE_MATASANO_TYPE_MEMBLK_H__ 1
+
+#ifndef __ZHE_PNGPACK_MEMBLK_H__
+#define __ZHE_PNGPACK_MEMBLK_H__ 1
 
 
 #include <stddef.h>
@@ -15,11 +16,6 @@ extern "C" {
 }
 #endif
 
-#define UPCASE_CHAR(x) ((('a'<=(x))&&((x)<='z'))?((x)-'a'+'A'):(x))
-#define DOWNCASE_CHAR(x) ((('A'<=(x))&&((x)<='Z'))?((x)-'A'+'a'):(x))
-#define DOWNCASE_HEXCHAR_TO_I(x) ((('0'<=(x))&&((x)<='9'))?((x)-'0'):   \
-                                  ((('a'<=(x))&&((x)<='f'))?((x)-'a'+10):0))
-#define HEXCHAR_TO_I(x) (DOWNCASE_HEXCHAR_TO_I(DOWNCASE_CHAR((x))))
 
 #define X64_TO_I(x) ((('A'<=(x))&&((x)<='Z'))?((x)-'A'):          \
                      ((('a'<=(x))&&((x)<='z'))?((x)-'a'+26):      \
@@ -42,7 +38,11 @@ int memblk_destroy(memblk_t* memblk);
 memblk_t* memblk_x64_unpack(char* data);
 char* memblk_x64_digest(memblk_t* in);
 
-size_t memblk_write(memblk_t* block, FILE* fp);
+size_t memblk_fread(memblk_t* block, size_t size, FILE* fp);
+size_t memblk_fwrite(memblk_t* block, size_t size, FILE* fp);
+
+size_t memblk_contents_x64_pack(memblk_t* block);
+size_t memblk_contents_x64_unpack(memblk_t* block);
 
 
 #ifdef __cplusplus

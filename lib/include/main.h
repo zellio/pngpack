@@ -4,18 +4,6 @@
 #define __PNGPACK_H__ 1
 
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <zlib.h>
-
-#include "memblk.h"
-#include "pack.h"
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif

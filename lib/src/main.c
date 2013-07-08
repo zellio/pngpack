@@ -2,6 +2,11 @@
 
 #include "main.h"
 
+#include <stdlib.h>
+
+#include "memblk.h"
+#include "pack.h"
+
 
 int write_packed_png(char* src, char* dst) {
     memblk_t* png_header = memblk_x64_unpack("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAA==");
@@ -12,9 +17,9 @@ int write_packed_png(char* src, char* dst) {
 
     fflush(stdout);
 
-    memblk_write(png_header, fp);
-    memblk_write(file_chunk, fp);
-    memblk_write(png_footer, fp);
+    memblk_fwrite(png_header, png_header->size, fp);
+    memblk_fwrite(file_chunk, file_chunk->size, fp);
+    memblk_fwrite(png_footer, png_footer->size, fp);
 
     fflush(stdout);
 
@@ -37,7 +42,7 @@ int main(int argc, char** argv) {
         src = argv[1];
         FILE* fp = fopen("pngpack.out", "w");
         memblk_t* file = unpack_file(src);
-        memblk_write(file, fp);
+        memblk_fwrite(file, file->size, fp);
         fclose(fp);
         break;
     case 3: //pack
