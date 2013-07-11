@@ -15,10 +15,11 @@ extern "C" {
 #endif
 
 
+
 byte* crypt_load_key(char* filename);
 
 size_t
-crypt_initialize_ecxt(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx);
+crypt_initialize_ectx(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx);
 
 size_t
 crypt_initialize_dctx(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx);

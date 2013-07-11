@@ -39,12 +39,11 @@ memblk_t* pack_file(char* filename) {
     memblk_fread(fdata, size, fp);
     memblk_contents_deflate(fdata);
 
-    // EVP_CIPHER_CTX ctx;
-    // byte* key = crypt_load_key(NULL);
-    // crypt_initialize_ectx(key, 32, &ctx);
-    // memblk_contents_encrypt(fdata, &ctx);
-    // EVP_CIPHER_CTX_cleanup(&e_ctx);
-    // EVP_CIPHER_CTX_cleanup(&d_ctx);
+    EVP_CIPHER_CTX ctx;
+    byte* key = crypt_load_key(NULL);
+    crypt_initialize_ectx(key, 32, &ctx);
+    memblk_contents_encrypt(fdata, &ctx);
+    EVP_CIPHER_CTX_cleanup(&ctx);
 
     size_t fdata_size = fdata->size;
     size_t container_size = fdata_size + 20;
@@ -90,12 +89,11 @@ memblk_t* unpack_file(char* filename) {
     fseek(fp, 12L, SEEK_CUR);
     memblk_fread(block, fd64_size - 8, fp);
 
-    // EVP_CIPHER_CTX ctx;
-    // byte* key = crypt_load_key(NULL);
-    // crypt_initialize_aes_context(key, 32, &ctx);
-    // memblk_contents_decrypt(block, &d_ctx);
-    // EVP_CIPHER_CTX_cleanup(&e_ctx);
-    // EVP_CIPHER_CTX_cleanup(&d_ctx);
+    EVP_CIPHER_CTX ctx;
+    byte* key = crypt_load_key(NULL);
+    crypt_initialize_dctx(key, 32, &ctx);
+    memblk_contents_decrypt(block, &ctx);
+    EVP_CIPHER_CTX_cleanup(&ctx);
 
     memblk_contents_inflate(block);
 

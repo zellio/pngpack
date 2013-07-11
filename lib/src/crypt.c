@@ -25,7 +25,7 @@ byte* crypt_load_key(char* filename) {
 }
 
 size_t
-crypt_initialize_ecxt(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx) {
+crypt_initialize_ectx(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx) {
     byte key[32], iv[32];
     EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha1(), NULL, key_data, key_length,
                    10, key, iv);
@@ -35,7 +35,7 @@ crypt_initialize_ecxt(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx) {
 }
 
 size_t
-crypt_initialize_d_cxt(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx) {
+crypt_initialize_dctx(byte* key_data, size_t key_length, EVP_CIPHER_CTX* ctx) {
     byte key[32], iv[32];
     EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha1(), NULL, key_data, key_length,
                    10, key, iv);
