@@ -26,8 +26,11 @@ memblk.o: memblk.c memblk.h
 pack.o: pack.c pack.h
 	$(CC) $(CFLAGS) -I$(INCROOT) -o $(OBJROOT)/$(@) $(<)
 
+crypt.o: crypt.c crypt.h
+	$(CC) $(CFLAGS) -I$(INCROOT) -o $(OBJROOT)/$(@) $(<)
+
 main.o: main.c main.h
 	$(CC) $(CFLAGS) -I$(INCROOT) -o $(OBJROOT)/$(@) $(<)
 
-pngpack: main.o memblk.o pack.o
-	$(CC) -o $(@) -lz  $(OBJROOT)/main.o $(OBJROOT)/memblk.o $(OBJROOT)/pack.o
+pngpack: main.o memblk.o pack.o crypt.o
+	$(CC) -o $(@) -lz -lssl -lcrypto $(OBJROOT)/main.o $(OBJROOT)/memblk.o $(OBJROOT)/pack.o $(OBJROOT)/crypt.o
