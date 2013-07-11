@@ -4,8 +4,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
 #include <sys/stat.h>
 #include <zlib.h>
+
+#include "crypt.h"
 
 
 byte* pack_uint32(byte* ptr, uint32_t ui32) {
@@ -34,6 +38,13 @@ memblk_t* pack_file(char* filename) {
     memblk_t* fdata = memblk_create(size);
     memblk_fread(fdata, size, fp);
     memblk_contents_deflate(fdata);
+
+    // EVP_CIPHER_CTX ctx;
+    // byte* key = crypt_load_key(NULL);
+    // crypt_initialize_ectx(key, 32, &ctx);
+    // memblk_contents_encrypt(fdata, &ctx);
+    // EVP_CIPHER_CTX_cleanup(&e_ctx);
+    // EVP_CIPHER_CTX_cleanup(&d_ctx);
 
     size_t fdata_size = fdata->size;
     size_t container_size = fdata_size + 20;
@@ -78,6 +89,13 @@ memblk_t* unpack_file(char* filename) {
     memblk_t* block = memblk_create(fd64_size - 8);
     fseek(fp, 12L, SEEK_CUR);
     memblk_fread(block, fd64_size - 8, fp);
+
+    // EVP_CIPHER_CTX ctx;
+    // byte* key = crypt_load_key(NULL);
+    // crypt_initialize_aes_context(key, 32, &ctx);
+    // memblk_contents_decrypt(block, &d_ctx);
+    // EVP_CIPHER_CTX_cleanup(&e_ctx);
+    // EVP_CIPHER_CTX_cleanup(&d_ctx);
 
     memblk_contents_inflate(block);
 
