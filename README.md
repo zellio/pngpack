@@ -3,8 +3,12 @@
 
 Small utility for packing arbitrary files into PNG comment sections.
 
-Currently files are simply base64 encoded and packed into a generic PNG
-file. Future plans include compression and encryption.
+The files are stored as encrypted gziped binary blobs.
+
+Currently encryption / decryption assumes there is a file called pngpack.key in
+the root of the project which contains a 256 bit base64 encoded AES key without
+a trailing newline.
+
 
 ## Copyright
 
