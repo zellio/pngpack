@@ -18,7 +18,8 @@ extern "C" {
 #endif
 
 
-static inline byte* pack_uint32(byte* ptr, uint32_t ui32);
+byte* pack_uint32(byte* ptr, uint32_t ui32);
+byte* unpack_uint32(byte* ptr, uint32_t* ui32_ptr);
 
 memblk_t* pack_file(char* filename);
 memblk_t* unpack_file(char* filename);
