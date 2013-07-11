@@ -34,7 +34,6 @@ int write_packed_png(char* src, char* dst) {
 
 
 int main(int argc, char** argv) {
-
     char *src, *dst;
 
     switch(argc) {
@@ -55,5 +54,6 @@ int main(int argc, char** argv) {
         exit(1);
         break;
     }
+
     return 0;
 }
