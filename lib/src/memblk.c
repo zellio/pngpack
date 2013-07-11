@@ -1,8 +1,10 @@
 
 
 #include "memblk.h"
+#include "pack.h"
 
 #include <stdlib.h>
+#include <zlib.h>
 
 
 memblk_t* memblk_create(size_t size) {
@@ -110,4 +112,41 @@ size_t memblk_contents_x64_unpack(memblk_t* block) {
     block->data = new_block->data;
     free(new_block);
     return block->size;
+}
+
+size_t memblk_contents_deflate(memblk_t* block) {
+    byte* data = block->data;
+    size_t size = block->size;
+    size_t compressed_size = compressBound(size) + 4;
+    byte* buffer = calloc(compressed_size, sizeof(byte));
+
+    compress2(buffer + 4, &compressed_size, data, size, 9);
+
+    size_t new_block_size = compressed_size + 4;
+
+    block->data = realloc(buffer, new_block_size);
+    block->size = new_block_size;
+
+    pack_uint32(block->data, size);
+
+    free(data);
+
+    return compressed_size;
+}
+
+size_t memblk_contents_inflate(memblk_t* block) {
+    byte* block_data = block->data;
+    size_t size = block->size - 4;
+    size_t decompressed_size;
+    byte* data = unpack_uint32(block_data, (uint32_t*)&decompressed_size);
+
+    byte* decompressed_data = calloc(decompressed_size, sizeof(byte));
+    uncompress(decompressed_data, &decompressed_size, data, size);
+
+    block->data = decompressed_data;
+    block->size = decompressed_size;
+
+    free(block_data);
+
+    return decompressed_size;
 }

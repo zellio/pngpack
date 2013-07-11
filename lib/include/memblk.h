@@ -45,6 +45,10 @@ size_t memblk_contents_x64_pack(memblk_t* block);
 size_t memblk_contents_x64_unpack(memblk_t* block);
 
 
+size_t memblk_contents_deflate(memblk_t* block);
+size_t memblk_contents_inflate(memblk_t* block);
+
+
 #ifdef __cplusplus
 };
 #endif
