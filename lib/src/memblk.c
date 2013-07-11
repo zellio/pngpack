@@ -4,6 +4,7 @@
 #include "pack.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <zlib.h>
 
 
@@ -149,4 +150,44 @@ size_t memblk_contents_inflate(memblk_t* block) {
     free(block_data);
 
     return decompressed_size;
+}
+
+size_t memblk_contents_encrypt(memblk_t* block, EVP_CIPHER_CTX* ctx){
+    byte* in_data = block->data;
+    int32_t in_size = block->size;
+
+    int32_t out_size = in_size + AES_BLOCK_SIZE - 1;
+    byte* out_data = calloc(out_size, sizeof(byte));
+
+    int32_t final_size;
+    EVP_EncryptInit_ex(ctx, NULL, NULL, NULL, NULL);
+    EVP_EncryptUpdate(ctx, out_data, &out_size, in_data, in_size);
+    EVP_EncryptFinal_ex(ctx, out_data + out_size, &final_size);
+
+    free(block->data);
+
+    block->data = out_data;
+    block->size = out_size + final_size;
+
+    return out_size;
+}
+
+size_t memblk_contents_decrypt(memblk_t* block, EVP_CIPHER_CTX* ctx){
+    byte* in_data = block->data;
+    int32_t in_size = block->size;
+
+    int32_t out_size = in_size + AES_BLOCK_SIZE - 1;
+    byte* out_data = calloc(out_size, sizeof(byte));
+
+    int32_t final_size;
+    EVP_DecryptInit_ex(ctx, NULL, NULL, NULL, NULL);
+    EVP_DecryptUpdate(ctx, out_data, &out_size, in_data, in_size);
+    EVP_DecryptFinal_ex(ctx, out_data + out_size, &final_size);
+
+    free(block->data);
+
+    block->data = out_data;
+    block->size = out_size + final_size;
+
+    return out_size;
 }

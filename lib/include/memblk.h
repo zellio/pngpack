@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <openssl/aes.h>
+#include <openssl/evp.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,9 +46,11 @@ size_t memblk_fwrite(memblk_t* block, size_t size, FILE* fp);
 size_t memblk_contents_x64_pack(memblk_t* block);
 size_t memblk_contents_x64_unpack(memblk_t* block);
 
-
 size_t memblk_contents_deflate(memblk_t* block);
 size_t memblk_contents_inflate(memblk_t* block);
+
+size_t memblk_contents_encrypt(memblk_t* block, EVP_CIPHER_CTX* ctx);
+size_t memblk_contents_decrypt(memblk_t* block, EVP_CIPHER_CTX* ctx);
 
 
 #ifdef __cplusplus
