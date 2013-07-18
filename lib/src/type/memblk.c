@@ -96,7 +96,6 @@ ssize_t memblk_erase(memblk_t* block) {
     return 0;
 }
 
-
 ssize_t memblk_write_uint32(memblk_t* block, uint32_t ui32) {
     byte* ptr = block->ptr;
     if (ptr + 4 > block->end)
@@ -125,7 +124,13 @@ ssize_t memblk_read_uint32(memblk_t* block, uint32_t* ui32_ptr) {
     return 4;
 }
 
-static char x64_digest_encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X','Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f','g', 'h', 'i', 'j', 'k', 'l', 'm', 'n','o', 'p', 'q', 'r', 's', 't', 'u', 'v','w', 'x', 'y', 'z', '0', '1', '2', '3','4', '5', '6', '7', '8', '9', '+', '/'};
+static char x64_digest_encoding_table[] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O',
+    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X','Y', 'Z', 'a', 'b', 'c', 'd',
+    'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n','o', 'p', 'q', 'r', 's',
+    't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3','4', '5', '6', '7',
+    '8', '9', '+', '/'
+};
 
 char* memblk_x64_encode(memblk_t* block) {
     size_t size = block->size;
